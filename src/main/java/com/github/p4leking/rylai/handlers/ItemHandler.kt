@@ -343,19 +343,20 @@ class ItemHandler(private val plugin: Rylai) : Listener {
     @EventHandler
     fun despawnOnDismount(event: EntityDismountEvent){
         val player = event.entity as? Player ?: return
+        val mount = event.dismounted
 
         /** Despawn summoned horses on dismount */
-        if(event.dismounted is Horse){
-            if(summonedHorses.remove(event.dismounted.uniqueId)){
-                event.dismounted.remove()
+        if(mount is Horse){
+            if(summonedHorses.remove(mount.uniqueId)){
+                mount.remove()
             }
             return
         }
 
         /** Directly add boats to inventory on dismount */
-        val boat = (event.dismounted as? Boat ?: return)
-        boat.remove()
-        val overflow = player.inventory.addItem(ItemStack(boat.boatMaterial))
+        val boat = (mount as? Boat ?: return).boatMaterial
+        mount.remove()
+        val overflow = player.inventory.addItem(ItemStack(boat))
         for (item in overflow){
             player.world.dropItem(player.location, item.value)
         }
