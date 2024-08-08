@@ -1,3 +1,5 @@
+/** © 2024 Bernhard Eierle. All rights reserved. */
+
 package com.github.p4leking.rylai.commands
 
 import com.github.p4leking.rylai.Rylai
