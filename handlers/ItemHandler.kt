@@ -9,6 +9,7 @@ import net.kyori.adventure.text.TextComponent
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.attribute.Attribute
+import org.bukkit.entity.Boat
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Horse
 import org.bukkit.entity.Player
@@ -341,11 +342,24 @@ class ItemHandler(private val plugin: Rylai) : Listener {
 
     @EventHandler
     fun despawnOnDismount(event: EntityDismountEvent){
-        if(event.entity !is Player) return
-        val horse = event.dismounted as? Horse ?: return
-        if(summonedHorses.remove(horse.uniqueId)){
-            horse.remove()
+        val player = event.entity as? Player ?: return
+
+        /** Despawn summoned horses on dismount */
+        if(event.dismounted is Horse){
+            if(summonedHorses.remove(event.dismounted.uniqueId)){
+                event.dismounted.remove()
+            }
+            return
         }
+
+        /** Directly add boats to inventory on dismount */
+        val boat = (event.dismounted as? Boat ?: return)
+        boat.remove()
+        val overflow = player.inventory.addItem(ItemStack(boat.boatMaterial))
+        for (item in overflow){
+            player.world.dropItem(player.location, item.value)
+        }
+        return
     }
 
     @EventHandler
