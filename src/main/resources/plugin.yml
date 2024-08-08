@@ -1,0 +1,31 @@
+name: Rylai
+version: '${project.version}'
+main: com.github.p4leking.rylai.Rylai
+api-version: 1.19
+authors: [ Bernhard Eierle ]
+depend: [ ProtocolLib ]
+description: Provides combat skills, which can be used by pressing a button, crafts, a group system, 
+  as well as restricting overpowered items and more.
+commands:
+  skills:
+    description: Can open a custom Menu, which is used to select a class and equip skills to the hotbar.
+    usage: "§7Usage: /rs [save | load | remove]"
+    aliases: [ rs, rylaiskills ]
+  group:
+    description: A set of commands to create a new group or interact with your current group.
+    usage: "§7Usage: /rg [help | ...]"
+    aliases: [ rg, rylaigroup ]
+  ranking:
+    description: A command for looking up the highest level players in the different skills.
+    usage: "§7Usage: /rt [skillName]"
+    aliases: [ rt, rylaitop ]
+  rinfo:
+    description: A command for looking up the stats and group of any player.
+    usage: "§7Usage: /ri [playerName]"
+    aliases: [ ri, rylaiinfo ]
+  chat:
+    description: A set of commands for chatting with other players
+    usage: "§7Usage: /global [mute | unmute | message], /local [message], /trading [mute | unmute | message], /w <playerName> <message>, /r <message>, /ignore <playerName>, /unignore <playerName>"
+    aliases: [ global, local, trading, w, r, ignore, unignore ]
+  multiplier:
+    permission: op
