@@ -92,6 +92,7 @@ class Rylai : JavaPlugin() {
         getCommand("rinfo")?.setExecutor(Rinfo(this))
         getCommand("multiplier")?.setExecutor(Multiplier())
         getCommand("chat")?.setExecutor(Chat(this))
+        getCommand("modtools")?.setExecutor(ModTools(this))
 
         /** Register event handlers */
         CastHandler(this)

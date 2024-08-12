@@ -30,11 +30,8 @@ class Skills(val plugin: Rylai) : Listener, CommandExecutor, TabCompleter {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        if(args.size > 1){
+        if(args.size != 1){
             return mutableListOf()
-        }
-        if(args.isEmpty()){
-            return mutableListOf("remove", "load", "save")
         }
         return setOf("remove", "load", "save")
             .filter { it.startsWith(args[0], true) }

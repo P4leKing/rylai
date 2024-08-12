@@ -109,7 +109,7 @@ class Ranking(private val plugin: Rylai) : CommandExecutor, TabCompleter {
 
     /** Provide suggestions for the commands input string */
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        if(args.isEmpty()){
+        if(args.size != 1){
             return mutableListOf()
         }
 

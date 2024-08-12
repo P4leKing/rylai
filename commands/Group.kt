@@ -40,25 +40,21 @@ class Group(private val plugin: Rylai) : CommandExecutor, TabCompleter {
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        if(args.isEmpty()){
-            return subcommands.toMutableList()
-        }
-        if(args[0] in setOf("invite", "kick", "promote", "demote")){
-            if(args.size != 2){
-                return mutableListOf()
-            }
-            val players = mutableListOf<String>()
-            plugin.server.onlinePlayers
-                .filter { it.name.startsWith(args[1], true) }
-                .mapTo(players) { it.name }
-            return players
-        }
-        if(args[0] in setOf("info", "create", "accept", "leave", "tag", "help")){
+        if(args.isEmpty() || args.size > 2){
             return mutableListOf()
         }
-        val params = subcommands.toMutableList()
-        params.retainAll { s -> s.startsWith(args[0], true) }
-        return params
+
+        if(args.size == 1){
+            return subcommands.filter { it.startsWith(args[0], true) }.toMutableList()
+        }
+
+        if(args[0] in setOf("invite", "kick", "promote", "demote")){
+            return plugin.server.onlinePlayers
+                .filter { it.name.startsWith(args[1], true) }
+                .map { it.name }.toMutableList()
+        }
+
+        return mutableListOf()
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

@@ -20,11 +20,9 @@ class Rinfo(private val plugin: Rylai) : CommandExecutor, TabCompleter {
             return mutableListOf()
         }
 
-        val players = mutableListOf<String>()
-        plugin.server.onlinePlayers
+        return plugin.server.onlinePlayers
             .filter { it.name.startsWith(args[0], true) }
-            .mapTo(players) { it.name }
-        return players
+            .map{ it.name }.toMutableList()
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

@@ -76,21 +76,20 @@ class Chat(private val plugin: Rylai) : Listener, CommandExecutor, TabCompleter 
     }
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
-        val recommended = mutableListOf<String>()
-        if(label in setOf("w", "ignore", "unignore") && args.size == 1){
-            plugin.server.onlinePlayers
-                .filter { it.name.startsWith(args[0], true) }
-                .mapTo(recommended) { it.name }
-        }else if(label in setOf("global", "trading")){
-            if(args.isEmpty()){
-                return mutableListOf("mute", "unmute")
-            }else if(args.size == 1){
-                setOf("mute", "unmute").filterTo(recommended) {
-                    it.startsWith(args[0], true)
-                }
-            }
+        if(args.size != 1){
+            return mutableListOf()
         }
-        return recommended
+        if(label in setOf("w", "ignore", "unignore")){
+            return plugin.server.onlinePlayers
+                .filter { it.name.startsWith(args[0], true) }
+                .map { it.name }.toMutableList()
+        }
+        if(label in setOf("global", "trading")){
+            return setOf("mute", "unmute")
+                .filter{ it.startsWith(args[0], true) }
+                .toMutableList()
+        }
+        return mutableListOf()
     }
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
