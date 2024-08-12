@@ -33,7 +33,12 @@ class Skills(val plugin: Rylai) : Listener, CommandExecutor, TabCompleter {
         if(args.size > 1){
             return mutableListOf()
         }
-        return mutableListOf("remove", "load", "save")
+        if(args.isEmpty()){
+            return mutableListOf("remove", "load", "save")
+        }
+        return setOf("remove", "load", "save")
+            .filter { it.startsWith(args[0], true) }
+            .toMutableList()
     }
 
     @EventHandler

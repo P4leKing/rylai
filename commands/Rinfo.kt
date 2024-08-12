@@ -21,11 +21,9 @@ class Rinfo(private val plugin: Rylai) : CommandExecutor, TabCompleter {
         }
 
         val players = mutableListOf<String>()
-        for(player in plugin.server.onlinePlayers){
-            if(player.name.startsWith(args[0], true)){
-                players.add(player.name)
-            }
-        }
+        plugin.server.onlinePlayers
+            .filter { it.name.startsWith(args[0], true) }
+            .mapTo(players) { it.name }
         return players
     }
 

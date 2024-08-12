@@ -18,7 +18,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import java.util.*
 
-class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
+class Chat(private val plugin: Rylai) : Listener, CommandExecutor, TabCompleter {
     init {
         plugin.server.pluginManager.registerEvents(this, plugin)
     }
@@ -78,19 +78,15 @@ class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>): MutableList<String> {
         val recommended = mutableListOf<String>()
         if(label in setOf("w", "ignore", "unignore") && args.size == 1){
-            for(player in plugin.server.onlinePlayers){
-                if(player.name.startsWith(args[0], true)){
-                    recommended.add(player.name)
-                }
-            }
+            plugin.server.onlinePlayers
+                .filter { it.name.startsWith(args[0], true) }
+                .mapTo(recommended) { it.name }
         }else if(label in setOf("global", "trading")){
             if(args.isEmpty()){
                 return mutableListOf("mute", "unmute")
             }else if(args.size == 1){
-                for(option in setOf("mute", "unmute")){
-                    if(option.startsWith(args[0], true)){
-                        recommended.add(option)
-                    }
+                setOf("mute", "unmute").filterTo(recommended) {
+                    it.startsWith(args[0], true)
                 }
             }
         }
@@ -267,8 +263,11 @@ class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
 
     /** Sends a message in global chat */
     private fun globalChatMessage(sender: Player, msg: String){
-        val formattedMsg = plugin.formatMessage(sender, msg, 'A', ChatColor.DARK_GREEN)
+        if(ModTools.muted.contains(sender.uniqueId)){
+            return
+        }
 
+        val formattedMsg = plugin.formatMessage(sender, msg, 'A', ChatColor.DARK_GREEN)
         for(player in plugin.server.onlinePlayers){
             if(mutedGlobal.contains(player.uniqueId)){
                 continue
@@ -278,11 +277,15 @@ class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
     }
 
     /** Sends a message in local chat */
-    private fun localChatMessage(player: Player, msg: String){
-        val formattedMsg = plugin.formatMessage(player, msg, 'L', ChatColor.YELLOW)
-        val id = player.uniqueId
+    private fun localChatMessage(sender: Player, msg: String){
+        if(ModTools.muted.contains(sender.uniqueId)){
+            return
+        }
+
+        val formattedMsg = plugin.formatMessage(sender, msg, 'L', ChatColor.YELLOW)
+        val id = sender.uniqueId
         plugin.server.scheduler.callSyncMethod(plugin) {
-            for(entity in player.location.getNearbyEntities(150.0, 150.0, 150.0)) {
+            for(entity in sender.location.getNearbyEntities(150.0, 150.0, 150.0)) {
                 if (entity !is Player) {
                     continue
                 }
@@ -293,8 +296,11 @@ class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
 
     /** Sends a message in trade chat */
     private fun tradeChatMessage(sender: Player, msg: String){
-        val formattedMsg = plugin.formatMessage(sender, msg, 'T', ChatColor.GRAY)
+        if(ModTools.muted.contains(sender.uniqueId)){
+            return
+        }
 
+        val formattedMsg = plugin.formatMessage(sender, msg, 'T', ChatColor.GRAY)
         for(player in plugin.server.onlinePlayers){
             if(mutedTrade.contains(player.uniqueId)){
                 continue
@@ -338,8 +344,8 @@ class Chat(private val plugin: Rylai): Listener, CommandExecutor, TabCompleter {
 
         /** Save ignores to config */
         val stringList = arrayListOf<String>()
-        for(player in ignoredBy[id] ?: return){
-            stringList.add(player.toString())
+        for(players in ignoredBy[id] ?: return){
+            stringList.add(players.toString())
         }
         plugin.persistentConfig.config["${id}.ignoredBy"] = stringList
     }

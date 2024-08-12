@@ -116,17 +116,13 @@ class Ranking(private val plugin: Rylai) : CommandExecutor, TabCompleter {
         /** Fill list with matches for input string */
         val params = mutableListOf<String>()
 
-        for(craftingSkill in CraftingSkills.values()){
-            if(craftingSkill.className.startsWith(args[0], true)){
-                params.add(craftingSkill.className)
-            }
-        }
+        CraftingSkills.values()
+            .filter { it.className.startsWith(args[0], true) }
+            .mapTo(params) { it.className }
 
-        for(combatClass in Classes.values()){
-            if(combatClass.className.startsWith(args[0], true)){
-                params.add(combatClass.className)
-            }
-        }
+        Classes.values()
+            .filter { it.className.startsWith(args[0], true) }
+            .mapTo(params) { it.className }
 
         return params
     }

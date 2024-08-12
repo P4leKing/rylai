@@ -48,11 +48,9 @@ class Group(private val plugin: Rylai) : CommandExecutor, TabCompleter {
                 return mutableListOf()
             }
             val players = mutableListOf<String>()
-            for(player in plugin.server.onlinePlayers){
-                if(player.name.startsWith(args[1], true)){
-                    players.add(player.name)
-                }
-            }
+            plugin.server.onlinePlayers
+                .filter { it.name.startsWith(args[1], true) }
+                .mapTo(players) { it.name }
             return players
         }
         if(args[0] in setOf("info", "create", "accept", "leave", "tag", "help")){
